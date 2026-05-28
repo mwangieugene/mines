@@ -1,0 +1,15 @@
+{
+    "java.errors.incompleteClasspath.severity": "warning",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.configuration.checkProjectSettingsExclusions": false,
+    "java.completion.importOrder": [
+        "java",
+        "javax",
+        "org",
+        "com"
+    ],
+    "java.format.settings.url": "",
+    "java.format.settings.profile": "GoogleStyle",
+    "editor.formatOnSave": true,
+    "files.trimTrailingWhitespace": true
+}

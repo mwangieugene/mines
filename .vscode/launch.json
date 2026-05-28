@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "gradingSystem",
+            "request": "launch",
+            "mainClass": "gradingSystem",
+            "projectName": "mines_ee6b86d0"
+        },
+        {
+            "type": "java",
+            "name": "Launch gradingSystem",
+            "request": "launch",
+            "mainClass": "gradingSystem",
+            "projectName": "vscode2works"
+        }
+    ]
+}
