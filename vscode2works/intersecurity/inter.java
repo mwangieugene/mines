@@ -34,14 +34,15 @@ import javax.servlet.http.HttpServletResponse;
  * (Intraneighbourhood Security Agency — Kenya)
  *
  * Endpoint : POST /api/contact
- * Expects  : JSON body { fullName, phone, email, serviceType, location, message }
- * Returns  : JSON { "status": "ok|error", "message": "..." }
+ * Expects : JSON body { fullName, phone, email, serviceType, location, message
+ * }
+ * Returns : JSON { "status": "ok|error", "message": "..." }
  *
  * On a valid submission this servlet:
- *   1. Validates all fields (including Kenyan phone-number format).
- *   2. Appends the enquiry to enquiries.log on disk.
- *   3. Sends a notification email to the agency inbox.
- *   4. Sends a confirmation / auto-reply email to the client.
+ * 1. Validates all fields (including Kenyan phone-number format).
+ * 2. Appends the enquiry to enquiries.log on disk.
+ * 3. Sends a notification email to the agency inbox.
+ * 4. Sends a confirmation / auto-reply email to the client.
  *
  * ── CONFIGURATION ────────────────────────────────────────────────────────────
  * Fill in the five constants below before deploying.
@@ -57,17 +58,17 @@ public class inter extends HttpServlet {
     // ── Email configuration — change these before deploying ──────────────────
 
     /** SMTP host. Gmail shown; swap for your host's SMTP server if needed. */
-    private static final String SMTP_HOST     = "smtp.gmail.com";
+    private static final String SMTP_HOST = "smtp.gmail.com";
 
     /** SMTP port. 587 = STARTTLS (recommended). Use 465 for SSL. */
-    private static final int    SMTP_PORT     = 587;
+    private static final int SMTP_PORT = 587;
 
     /**
      * The Gmail address (or other SMTP account) used to send emails.
      * For Gmail you must create an App Password at
      * https://myaccount.google.com/apppasswords — do NOT use your main password.
      */
-    private static final String SMTP_USER     = "eugenemwangi0@gmail.com";
+    private static final String SMTP_USER = "eugenemwangi0@gmail.com";
 
     /** The App Password generated for the account above. */
     private static final String SMTP_PASSWORD = "ergx emuq ehdm jlev";
@@ -76,16 +77,14 @@ public class inter extends HttpServlet {
      * The agency inbox that receives enquiry notifications.
      * Usually your company email, e.g. info@intraneighbourhoodsecurity.co.ke
      */
-    private static final String AGENCY_EMAIL  = "eugenemwangi0@gmail.com";
+    private static final String AGENCY_EMAIL = "eugenemwangi0@gmail.com";
 
     // ── Validation patterns ───────────────────────────────────────────────────
 
-    private static final Pattern EMAIL_PATTERN =
-            Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
 
     // Accepts: 07XXXXXXXX, 01XXXXXXXX, +2547XXXXXXXX, +2541XXXXXXXX
-    private static final Pattern PHONE_PATTERN =
-            Pattern.compile("^(\\+254|0)(7|1)\\d{8}$");
+    private static final Pattern PHONE_PATTERN = Pattern.compile("^(\\+254|0)(7|1)\\d{8}$");
 
     private static final Path LOG_FILE = Path.of("enquiries.log");
 
@@ -165,14 +164,14 @@ public class inter extends HttpServlet {
      */
     private Session buildMailSession() {
         Properties props = new Properties();
-        props.put("mail.smtp.host",            SMTP_HOST);
-        props.put("mail.smtp.port",            String.valueOf(SMTP_PORT));
-        props.put("mail.smtp.auth",            "true");
+        props.put("mail.smtp.host", SMTP_HOST);
+        props.put("mail.smtp.port", String.valueOf(SMTP_PORT));
+        props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
         // Increase timeouts to avoid hanging the servlet thread
         props.put("mail.smtp.connectiontimeout", "5000");
-        props.put("mail.smtp.timeout",           "5000");
-        props.put("mail.smtp.writetimeout",      "5000");
+        props.put("mail.smtp.timeout", "5000");
+        props.put("mail.smtp.writetimeout", "5000");
 
         return Session.getInstance(props, new Authenticator() {
             @Override
@@ -195,22 +194,22 @@ public class inter extends HttpServlet {
         msg.setSubject("New Enquiry — " + serviceLabel(form.serviceType())
                 + " | " + form.fullName());
 
-        String body =
-                "A new service enquiry has been submitted on the website.\n\n"
+        String body = "A new service enquiry has been submitted on the website.\n\n"
                 + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
                 + "CLIENT DETAILS\n"
                 + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-                + "Name     : " + form.fullName()    + "\n"
-                + "Phone    : " + form.phone()       + "\n"
-                + "Email    : " + form.email()       + "\n"
+                + "Name     : " + form.fullName() + "\n"
+                + "Phone    : " + form.phone() + "\n"
+                + "Email    : " + form.email() + "\n"
                 + "Service  : " + serviceLabel(form.serviceType()) + "\n"
-                + "Location : " + form.location()    + "\n\n"
+                + "Location : " + form.location() + "\n\n"
                 + "MESSAGE\n"
                 + "─────────────────────────────────────────\n"
                 + (isBlank(form.message()) ? "(no additional message)" : form.message()) + "\n\n"
                 + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
                 + "Submitted: " + LocalDateTime.now().format(
-                        DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm")) + "\n"
+                        DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm"))
+                + "\n"
                 + "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
 
         msg.setText(body, "UTF-8");
@@ -232,8 +231,7 @@ public class inter extends HttpServlet {
         msg.setReplyTo(InternetAddress.parse(AGENCY_EMAIL));
         msg.setSubject("We received your enquiry — " + serviceLabel(form.serviceType()));
 
-        String body =
-                "Dear " + form.fullName() + ",\n\n"
+        String body = "Dear " + form.fullName() + ",\n\n"
                 + "Thank you for contacting Intraneighbourhood Security Agency.\n\n"
                 + "We have received your enquiry for:\n"
                 + "  Service  : " + serviceLabel(form.serviceType()) + "\n"
@@ -263,7 +261,8 @@ public class inter extends HttpServlet {
         StringBuilder sb = new StringBuilder();
         try (BufferedReader reader = request.getReader()) {
             String line;
-            while ((line = reader.readLine()) != null) sb.append(line);
+            while ((line = reader.readLine()) != null)
+                sb.append(line);
         }
         return sb.toString();
     }
@@ -294,16 +293,18 @@ public class inter extends HttpServlet {
 
     private String serviceLabel(String key) {
         return switch (key) {
-            case "guards"         -> "Security Guards";
-            case "cctv"           -> "CCTV Installation";
+            case "guards" -> "Security Guards";
+            case "cctv" -> "CCTV Installation";
             case "electric-fence" -> "Electric Fence Installation";
-            case "barbed-wire"    -> "Barbed Wire Installation";
-            case "multiple"       -> "Multiple Services";
-            default               -> "Security Services";
+            case "barbed-wire" -> "Barbed Wire Installation";
+            case "multiple" -> "Multiple Services";
+            default -> "Security Services";
         };
     }
 
-    private boolean isBlank(String s) { return s == null || s.trim().isEmpty(); }
+    private boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
+    }
 
     private void writeJsonError(HttpServletResponse response, int status, String message)
             throws IOException {
@@ -314,7 +315,8 @@ public class inter extends HttpServlet {
     }
 
     private String escapeJson(String s) {
-        if (s == null) return "";
+        if (s == null)
+            return "";
         return s.replace("\\", "\\\\").replace("\"", "\\\"");
     }
 
@@ -328,9 +330,9 @@ public class inter extends HttpServlet {
             if (json == null || json.isBlank())
                 throw new IllegalArgumentException("Empty body");
             return new EnquiryForm(
-                    extract(json, "fullName"),  extract(json, "phone"),
-                    extract(json, "email"),     extract(json, "serviceType"),
-                    extract(json, "location"),  extract(json, "message"));
+                    extract(json, "fullName"), extract(json, "phone"),
+                    extract(json, "email"), extract(json, "serviceType"),
+                    extract(json, "location"), extract(json, "message"));
         }
 
         private static String extract(String json, String key) {
@@ -343,7 +345,12 @@ public class inter extends HttpServlet {
     }
 
     private record ValidationResult(boolean isValid, String errorMessage) {
-        static ValidationResult valid()                  { return new ValidationResult(true,  null);    }
-        static ValidationResult invalid(String message)  { return new ValidationResult(false, message); }
+        static ValidationResult valid() {
+            return new ValidationResult(true, null);
+        }
+
+        static ValidationResult invalid(String message) {
+            return new ValidationResult(false, message);
+        }
     }
 }
